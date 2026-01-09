@@ -670,7 +670,7 @@ class ResetPasswordView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         new_password = request.data.get('new_password')
-
+ 
         try:
             user = User.objects.get(email=email)
             forget_password_otp = ForgetPasswordOTP.objects.filter(user=user).latest('otp_created_at')

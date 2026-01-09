@@ -14,7 +14,8 @@ def send_otp_email(email, otp):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [email]
 
-        send_mail(subject, message, email_from, recipient_list)
+        send_mail(subject, message, email_from,
+                  recipient_list, fail_silently=False)
         logger.info(f"OTP email sent successfully to {email}")
         return True
     except Exception as e:
