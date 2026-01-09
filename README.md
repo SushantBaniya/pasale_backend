@@ -1,0 +1,3 @@
+to run the celery in the backend command = celery -A backend worker --loglevel=info --pool=solo
+
+Requirements = All the Requirements.txt and a redis server (memurai) for windows
