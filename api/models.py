@@ -20,6 +20,19 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+class PaymentMethod(models.Model):
+    id = models.AutoField(primary_key=True)  # Explicit primary key
+    method_choices = [
+        ('Cash', 'Cash'),
+        ('Credit Card', 'Credit Card'),
+        ('Bank Transfer', 'Bank Transfer'),
+        ('UPI', 'UPI'),]
+    method_name = models.CharField(max_length=20, choices=method_choices, unique=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.method_name
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)  # Explicit primary key
@@ -31,7 +44,7 @@ class Product(models.Model):
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
     description = models.TextField(blank=True, null=True)
-    is_created_at=models.DateTimeField(auto_now_add=True)
+    is_created_at=models.DateTimeField(auto_now_add=True, null=True)
     is_updated_at=models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -70,15 +83,9 @@ class Customer(models.Model):
     #financial details
     open_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     credit_limmit = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    #payment preferences
-    payment_method_choices = [
-        ('Cash', 'Cash'),
-        ('Credit Card', 'Credit Card'),
-        ('Bank Transfer', 'Bank Transfer'),
-        ('UPI', 'UPI'),
-    ]
-    preferred_payment_method = models.CharField(max_length=20, choices=payment_method_choices, blank=True, null=True)
-    
+
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True, blank=True, related_name='customers')
+
     loyalty_points = models.IntegerField(default=0)
     #additional info
     referred_by = models.CharField(max_length=100, blank=True, null=True)
@@ -151,13 +158,8 @@ class Billing(models.Model):
     invoice_number = models.CharField(max_length=50, unique=True)
     invoice_date = models.DateField(null=True, blank=True)
     due_date = models.DateField(null=True, blank=True)
-    payment_choices = [
-        ('Cash', 'Cash'),
-        ('Credit Card', 'Credit Card'),
-        ('Bank Transfer', 'Bank Transfer'),
-        ('UPI', 'UPI'),
-    ]
-    payment_method = models.CharField(max_length=20, choices=payment_choices, blank=True, null=True)
+ 
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.SET_NULL, null=True)
     invoice_choices = [
         ('Paid', 'Paid'),
         ('Unpaid', 'Unpaid'),
